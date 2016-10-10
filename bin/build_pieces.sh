@@ -282,3 +282,18 @@ else
   fi
 fi
 
+### Get deployment for url
+##AWS=`aws apigateway get-deployment ${IAM_PROFILE} --rest-api-id ${OURAPI} --stage-name prod 2>&1`
+##EXIT=$?
+##if [[ ${EXIT} -eq 0 ]]; then
+##  # null operator because we just built it
+##  :
+##else 
+##  if echo ${AWS} | grep 'Method already exists for this resource' >/dev/null; then
+##    :
+##  else
+##    echo "${AWS}"
+##    exit ${EXIT}
+##  fi
+##fi
+##
