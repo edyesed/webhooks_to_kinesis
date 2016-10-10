@@ -22,3 +22,21 @@ The way this system will work is input comes from API gateway to Kinesis Stream.
 ### Delete that IAM user
 0.  Use Console
 
+### Find your API URL
+0. [AWS Console](https://console.aws.amazon.com)
+0. Services
+0. API Gateway
+0. APIs
+0. webhooks_to_kinesis
+0. Stages
+0. Prod
+0. island-streams
+0. POST
+
+### POST something in
+1. `curl -XPOST -H "Content-type: application/json" -d '{"this": "works"}' https://UR_URL_GOES_HERE.execute-api.us-west-2.amazonaws.com/prod/islandstreams`
+2. Get back something like this? 🐳
+
+     ```
+{"SequenceNumber":"11111111999999222222333333333333333333000000066666666677","ShardId":"shardId-000000000000"}
+     ```
