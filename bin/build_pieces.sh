@@ -22,7 +22,7 @@ AWS=`aws iam create-role ${IAM_PROFILE} --role-name api_kinesis_post --assume-ro
 EXIT=$?
 if [[ ${EXIT} -eq 0 ]]; then
   # XXX come back and parse this shit
-  ROLEARN=`echo ${AWS} | python -c 'import sys, json; print json.load(sys.stdin)["arn"];'`
+  ROLEARN=`echo ${AWS} | python -c 'import sys, json; print json.load(sys.stdin)["Role"]["Arn"];'`
 else 
   if echo ${AWS} | grep 'already exists\.$' >/dev/null; then
     # null operator because it already exists
@@ -246,6 +246,9 @@ else
 fi
 echo "Set up \"/islandstreams\" actual response"
 echo ""
+
+echo "Now we have to wait a 90 seconds for the dust to settle (really only needed on first run)"
+sleep 90
 
 # And then deploy because AWS -> AWS -> AWS -> AWS
 AWS=`aws apigateway create-deployment ${IAM_PROFILE} --rest-api-id ${OURAPI} --stage-name prod 2>&1`
