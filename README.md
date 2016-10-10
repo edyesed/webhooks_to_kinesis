@@ -9,7 +9,16 @@ There are tactical, if not strategic, reasons one might not want to handline inp
 ## Setup Stream + API Gateway ( inputs )
 The way this system will work is input comes from API gateway to Kinesis Stream.
 
-You actually don't have to do much of anything to make this much work.
-0. *IAM Policy for creating these things*
+### Create an IAM user to create the stream and api gateway
+0. Create an IAM user ( can delete after making these resources )
+1. Copy the credentials
+2. Attach this policy to the user
+    1.  AdministratorAccess
 
-0. `
+### Run the script and build the Stream + API gateway ( or read it )
+0. `./bin/build_pieces.sh`
+
+
+### Delete that IAM user
+0.  Use Console
+
