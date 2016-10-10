@@ -199,7 +199,7 @@ cat <<EOT > ${INPUTFILE}
 EOT
 
 # add the put method on the resource
-AWS=`aws apigateway put-method ${IAM_PROFILE} --rest-api-id ${OURAPI} --resource-id ${STREAMSID} --http-method 'POST' --authorization-type 'NONE' --no-api-key-required --request-parameters "method.request.header.custom-header=false" --region us-west-2 2>&1`
+AWS=`aws apigateway put-method ${IAM_PROFILE} --rest-api-id ${OURAPI} --resource-id ${STREAMSID} --http-method 'POST' --authorization-type 'NONE' --region us-west-2 2>&1`
 EXIT=$?
 if [[ ${EXIT} -eq 0 ]]; then
   # null operator because we just built it
@@ -214,8 +214,8 @@ else
 fi
 
 
-cat <<EOT > /var/tmp/template.json.$$
-{"application/json": "{     \"StreamName\": \"webhooks\",\n  \"Data\": \"$util.base64Encode($input.path    ('$'))\",\n  \"PartitionKey\": \"shardId-000000000000\" }"}
+cat <<\EOT > /var/tmp/template.json.$$
+{"application/json": "{     \"StreamName\": \"webhooks\",\n  \"Data\": \"$util.base64Encode($input.path('$'))\",\n  \"PartitionKey\": \"shardId-000000000000\" }"}
 EOT
 cat <<EOT > /var/tmp/req_parms.json.$$
 {
@@ -239,6 +239,36 @@ fi
 
 # And the integration response, because AWS is fucking craycray
 AWS=`aws apigateway put-integration-response ${IAM_PROFILE} --rest-api-id ${OURAPI} --resource-id ${STREAMSID} --http-method POST --status-code 200 --response-templates '{ "application/json": ""}' 2>&1`;
+EXIT=$?
+if [[ ${EXIT} -eq 0 ]]; then
+  # null operator because we just built it
+  :
+else 
+  if echo ${AWS} | grep 'Method already exists for this resource' >/dev/null; then
+    :
+  else
+    echo "${AWS}"
+    exit ${EXIT}
+  fi
+fi
+
+# And the method response, because AWS is fucking craycray
+AWS=`aws apigateway put-method-response ${IAM_PROFILE} --rest-api-id ${OURAPI} --resource-id ${STREAMSID} --http-method POST --status-code 200 --response-models '{ "application/json": "Empty" }' 2>&1`
+EXIT=$?
+if [[ ${EXIT} -eq 0 ]]; then
+  # null operator because we just built it
+  :
+else 
+  if echo ${AWS} | grep 'Response already exists for this resource' >/dev/null; then
+    :
+  else
+    echo "${AWS}"
+    exit ${EXIT}
+  fi
+fi
+
+# And then deploy because AWS -> AWS -> AWS -> AWS
+AWS=`aws apigateway create-deployment ${IAM_PROFILE} --rest-api-id ${OURAPI} --stage-name prod 2>&1`
 EXIT=$?
 if [[ ${EXIT} -eq 0 ]]; then
   # null operator because we just built it
