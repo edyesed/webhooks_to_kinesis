@@ -22,21 +22,27 @@ The way this system will work is input comes from API gateway to Kinesis Stream.
 ### Delete that IAM user
 0.  Use Console
 
-### Find your API URL
-0. [AWS Console](https://console.aws.amazon.com)
-0. Services
-0. API Gateway
-0. APIs
-0. webhooks_to_kinesis
-0. Stages
-0. Prod
-0. island-streams
-0. POST
+### Kinesis
+0. Goto [the lambda console](https://us-west-2.console.aws.amazon.com/lambda/home?region=us-west-2#/functions?display=list)
+0. Create a lambda function
+    1. *runtime*: `python`
+    2. *Filter*: `kinesis`
+    3. choose `kinesis-process-record-python`
+0. Choose *webhooks* as the stream
+0. Batch Size ( 1 or 2 )
+0. Starting Position *Trim Horizon*
+0. Enable Trigger
+0. Next
+0. Name *whatever*
+0. Role *Create role from template*
+0. Role *Create role from template*
+0. Role Name *Whatever*
+0. Policy Templates *Simple Microservice permissions*
+0. Next
+0. Create function
 
-### POST something in
-1. `curl -XPOST -H "Content-type: application/json" -d '{"this": "works"}' https://UR_URL_GOES_HERE.execute-api.us-west-2.amazonaws.com/prod/islandstreams`
-2. Get back something like this? 🐳
 
-     ```
-{"SequenceNumber":"11111111999999222222333333333333333333000000066666666677","ShardId":"shardId-000000000000"}
-     ```
+0. View the function
+1. View logs in cloudwatch
+2. `./bin/build_pieces.sh`
+2. Watch the spice flow
